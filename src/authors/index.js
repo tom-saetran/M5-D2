@@ -3,20 +3,26 @@ import fs from "fs"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import uniqid from "uniqid"
+import { checkMail } from "../checkEmail.js"
 
 const authorRouter = express.Router()
 
 const filePath = fileURLToPath(import.meta.url)
-const authorFolderPath = dirname(filePath)
-const authorJSONPath = join(authorFolderPath, "authors.json")
-const content = JSON.parse(fs.readFileSync(authorJSONPath))
+const folderPath = dirname(filePath)
+const jsonPath = join(folderPath, "/authors.json")
+const content = JSON.parse(fs.readFileSync(jsonPath))
 
 authorRouter.post("/", (req, res) => {
-    const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
-    content.push(newauthor)
-    fs.writeFileSync(authorJSONPath, JSON.stringify(content))
+    if (!checkMail(req.body.email)) {
+        console.log(req.body.email)
+        const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
+        content.push(newauthor)
+        fs.writeFileSync(jsonPath, JSON.stringify(content))
 
-    res.send(newauthor)
+        res.send(newauthor)
+    } else {
+        res.send("Email in use!")
+    }
 })
 
 authorRouter.get("/", (req, res) => {
