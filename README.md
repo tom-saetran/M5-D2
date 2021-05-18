@@ -1,3 +1,5 @@
+# ## ### #### ##### ###### HELLO WORLD
+
 GET         /students           => RES 200 + JSON(allStudents())
 GET         /students/id        => RES 200 + JSON(singleStudent(id))
 GET         /students?[params]  => RES 200 + JSON(filteredStudents([params]))
