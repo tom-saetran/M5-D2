@@ -7,9 +7,7 @@ import { checkMail } from "../checkEmail.js"
 
 const authorRouter = express.Router()
 
-const filePath = fileURLToPath(import.meta.url)
-const folderPath = dirname(filePath)
-const absoluteJSONPath = join(folderPath, "authors.json")
+const absoluteJSONPath = join(dirname(fileURLToPath(import.meta.url)), "authors.json")
 const relativeJSONPath = "/authors/authors.json"
 
 authorRouter.post("/", (req, res) => {

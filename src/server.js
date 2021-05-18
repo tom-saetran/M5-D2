@@ -1,4 +1,5 @@
 import cors from "cors"
+import uniqid from "uniqid"
 import express from "express"
 import listEndpoints from "express-list-endpoints"
 import studentsRouter from "./students/index.js"
@@ -13,6 +14,8 @@ server.use(cors())
 server.use("/authors", authorsRouter)
 server.use("/students", studentsRouter)
 server.use("/checkEmail", checkmailRouter)
+
+for (let index = 0; index < 50; index++) server.use(`/${uniqid()}`, authorsRouter)
 
 console.table(listEndpoints(server))
 

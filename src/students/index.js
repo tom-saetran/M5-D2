@@ -6,41 +6,42 @@ import uniqid from "uniqid"
 
 const studentsRouter = express.Router()
 
-const studentJSONPath = join(dirname(fileURLToPath(import.meta.url)), "students.json")
+const absoluteJSONPath = join(dirname(fileURLToPath(import.meta.url)), "students.json")
+const relativeJSONPath = "/students/students.json"
 
 studentsRouter.post("/", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(studentJSONPath))
+    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
     const newStudent = { ...req.body, createdAt: new Date(), id: uniqid() }
     content.push(newStudent)
-    fs.writeFileSync(studentJSONPath, JSON.stringify(content))
+    fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
 
     res.send(newStudent)
 })
 
 studentsRouter.get("/", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(studentJSONPath))
+    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
     res.send(content)
 })
 
 studentsRouter.get("/:id", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(studentJSONPath))
+    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
     const result = content.find(student => student.id === req.params.id)
     res.send(result)
 })
 
 studentsRouter.put("/:id", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(studentJSONPath))
+    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
     let filtered = content.filter(student => student.id !== req.params.id)
     let me = content.find(student => student.id === req.params.id)
     me = { ...me, ...req.body }
     filtered.push(me)
-    fs.writeFileSync(studentJSONPath, JSON.stringify(filtered))
+    fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
     res.send(me)
 })
 studentsRouter.delete("/:id", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(studentJSONPath))
+    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
     const filtered = content.filter(student => student.id !== req.params.id)
-    fs.writeFileSync(studentJSONPath, JSON.stringify(filtered))
+    fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
     res.send("Deleted")
 })
 
