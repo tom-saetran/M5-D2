@@ -10,9 +10,9 @@ const authorRouter = express.Router()
 const filePath = fileURLToPath(import.meta.url)
 const folderPath = dirname(filePath)
 const jsonPath = join(folderPath, "/authors.json")
-const content = JSON.parse(fs.readFileSync(jsonPath))
 
 authorRouter.post("/", (req, res) => {
+    const content = JSON.parse(fs.readFileSync(jsonPath))
     if (!checkMail(req.body.email)) {
         console.log(req.body.email)
         const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
@@ -26,31 +26,29 @@ authorRouter.post("/", (req, res) => {
 })
 
 authorRouter.get("/", (req, res) => {
-    console.log(req.headers)
+    const content = JSON.parse(fs.readFileSync(jsonPath))
     res.send(content)
 })
 
 authorRouter.get("/:id", (req, res) => {
+    const content = JSON.parse(fs.readFileSync(jsonPath))
     const result = content.find(author => author.id === req.params.id)
     res.send(result)
 })
 
 authorRouter.put("/:id", (req, res) => {
-    let _me = []
-    let _notMe = []
-    content.find(item => (item.id === req.params.id ? _me.push(item) : _notMe.push(item)))
-    console.log(_me)
-
+    const content = JSON.parse(fs.readFileSync(jsonPath))
     let filtered = content.filter(author => author.id !== req.params.id)
     let me = content.find(author => author.id === req.params.id)
     me = { ...me, ...req.body }
     filtered.push(me)
-    fs.writeFileSync(authorJSONPath, JSON.stringify(filtered))
+    fs.writeFileSync(jsonPath, JSON.stringify(filtered))
     res.send(me)
 })
 authorRouter.delete("/:id", (req, res) => {
+    const content = JSON.parse(fs.readFileSync(jsonPath))
     const filtered = content.filter(author => author.id !== req.params.id)
-    fs.writeFileSync(authorJSONPath, JSON.stringify(filtered))
+    fs.writeFileSync(jsonPath, JSON.stringify(filtered))
     res.send("Deleted")
 })
 
