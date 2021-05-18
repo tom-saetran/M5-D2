@@ -9,7 +9,7 @@ const authorRouter = express.Router()
 
 const filePath = fileURLToPath(import.meta.url)
 const folderPath = dirname(filePath)
-const jsonPath = join(folderPath, "/authors.json")
+const jsonPath = join(folderPath, "authors.json")
 
 authorRouter.post("/", (req, res) => {
     const content = JSON.parse(fs.readFileSync(jsonPath))
