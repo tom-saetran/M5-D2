@@ -11,6 +11,7 @@ const port = 8888
 server.use(express.json())
 server.use(cors())
 server.use("/authors", authorsRouter)
+server.use("/students", studentsRouter)
 server.use("/checkEmail", checkmailRouter)
 
 console.table(listEndpoints(server))
