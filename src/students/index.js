@@ -30,9 +30,9 @@ studentsRouter.get("/:id", (req, res) => {
 })
 
 studentsRouter.put("/:id", (req, res) => {
-    let me = []
-    let notMe = []
-    content.find(item => (item.id === req.params.id ? me.push(item) : notMe.push(item)))
+    let _me = []
+    let _notMe = []
+    content.find(item => (item.id === req.params.id ? _me.push(item) : _notMe.push(item)))
     console.log()
 
     let filtered = content.filter(student => student.id !== req.params.id)
