@@ -1,0 +1,1 @@
+GET /students/id => RES 200 + JSON(singleStudent(id)) GET /students?[params] => RES 200 + JSON(filteredStudents[params]) GET /students => RES 200 + JSON(allStudents()) POST {body} /students => RES 201 + {body + id} PUT {body} /students/id => RES 201 + {modified body} DELETE /students/id => RES 204
