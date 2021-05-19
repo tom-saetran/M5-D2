@@ -3,6 +3,7 @@ import fs from "fs"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import uniqid from "uniqid"
+import createError from "http-errors"
 
 const studentsRouter = express.Router()
 
@@ -35,7 +36,7 @@ studentsRouter.get("/:id", (req, res, next) => {
     try {
         const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
         const result = content.find(student => student.id === req.params.id)
-        res.send(result)
+        result ? res.send(result) : next(createError(404, `Student with id ${req.params.id} was not found`))
     } catch (error) {
         next(error)
     }
@@ -54,6 +55,7 @@ studentsRouter.put("/:id", (req, res, next) => {
         next(error)
     }
 })
+
 studentsRouter.delete("/:id", (req, res, next) => {
     try {
         const content = JSON.parse(fs.readFileSync(absoluteJSONPath))

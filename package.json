@@ -1,7 +1,7 @@
 {
-    "name": "d2",
+    "name": "backend",
     "version": "1.0.0",
-    "description": "GET /students/id => RES 200 + JSON(singleStudent(id)) GET /students?[params] => RES 200 + JSON(filteredStudents[params]) GET /students => RES 200 + JSON(allStudents()) POST {body} /students => RES 201 + {body + id} PUT {body} /students/id => RES 201 + {modified body} DELETE /students/id => RES 204",
+    "description": "Backend",
     "main": "index.js",
     "type": "module",
     "scripts": {
@@ -9,8 +9,8 @@
         "dev": "nodemon ./src/server.js -e js"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "Tom-Lennart Sætran",
+    "license": "MIT",
     "dependencies": {
         "cors": "^2.8.5",
         "express": "^4.17.1",

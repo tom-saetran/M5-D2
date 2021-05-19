@@ -1,23 +1,30 @@
-import express from "express"
 import fs from "fs"
+import uniqid from "uniqid"
+import express from "express"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
-import uniqid from "uniqid"
 import createError from "http-errors"
+import { validationResult } from "express-validator"
+import { blogPostValidation } from "../validation.js"
 
 const blogPostsRouter = express.Router()
 
 const absoluteJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogposts.json")
 const relativeJSONPath = "/blogposts/blogposts.json"
 
-blogPostsRouter.post("/", (req, res, next) => {
+blogPostsRouter.post("/", blogPostValidation, (req, res, next) => {
     try {
-        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        const entry = { ...req.body, createdAt: new Date(), id: uniqid() }
-        content.push(entry)
-        fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
+        const errors = validationResult(req)
+        if (errors.isEmpty()) {
+            const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+            const entry = { ...req.body, createdAt: new Date(), _id: uniqid() }
+            content.push(entry)
+            fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
 
-        res.send(entry)
+            res.send(entry)
+        } else {
+            next(createError(400, [{ ...errors }]))
+        }
     } catch (error) {
         next(error)
     }
