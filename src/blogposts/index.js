@@ -20,7 +20,7 @@ blogPostsRouter.post("/", blogPostValidation, (req, res, next) => {
             const entry = { ...req.body, createdAt: new Date(), _id: uniqid() }
             content.push(entry)
             fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
-            res.send(entry)
+            res.status(201).send(entry)
         } else {
             next(createError(400, JSON.stringify(errors.errors)))
         }
