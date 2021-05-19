@@ -4,22 +4,31 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import uniqid from "uniqid"
 import { checkMail } from "../checkEmail.js"
+import { authorSignUpValidation } from "../validation.js"
+import { validationResult } from "express-validator"
+import createError from "http-errors"
 
 const authorRouter = express.Router()
 
 const absoluteJSONPath = join(dirname(fileURLToPath(import.meta.url)), "authors.json")
 const relativeJSONPath = "/authors/authors.json"
 
-authorRouter.post("/", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-    if (!checkMail(req.body.email, relativeJSONPath)) {
-        const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
-        content.push(newauthor)
-        fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
+authorRouter.post("/", authorSignUpValidation, (req, res, next) => {
+    const errors = validationResult(req)
 
-        res.send(newauthor)
+    if (errors.isEmpty()) {
+        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+        if (!checkMail(req.body.email, relativeJSONPath)) {
+            const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
+            content.push(newauthor)
+            fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
+
+            res.send(newauthor)
+        } else {
+            res.status(400).send("Email in use!")
+        }
     } else {
-        res.status(400).send("Email in use!")
+        next(createError(400, [{ ...errors }]))
     }
 })
 
