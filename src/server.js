@@ -28,8 +28,10 @@ const logger = (req, res, next) => {
         method: req.method,
         resource: req.url,
         query: req.query,
+        body: req.body,
         _id: uniqid()
     })
+
     fs.writeFileSync(join(dirname(fileURLToPath(import.meta.url)), "log.json"), JSON.stringify(content))
     next()
 }

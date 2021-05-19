@@ -20,10 +20,9 @@ blogPostsRouter.post("/", blogPostValidation, (req, res, next) => {
             const entry = { ...req.body, createdAt: new Date(), _id: uniqid() }
             content.push(entry)
             fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
-
             res.send(entry)
         } else {
-            next(createError(400, [{ ...errors }]))
+            next(createError(400, JSON.stringify(errors.errors)))
         }
     } catch (error) {
         next(error)
@@ -33,6 +32,7 @@ blogPostsRouter.post("/", blogPostValidation, (req, res, next) => {
 blogPostsRouter.get("/", (req, res, next) => {
     try {
         const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+        if (req.query.title !== undefined) res.send(content.filter(item => item.title.toLowerCase().includes(req.query.title.toLowerCase())))
         res.send(content)
     } catch (error) {
         next(error)
@@ -42,30 +42,35 @@ blogPostsRouter.get("/", (req, res, next) => {
 blogPostsRouter.get("/:id", (req, res, next) => {
     try {
         const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        const result = content.find(item => item.id === req.params.id)
+        const result = content.find(item => item._id === req.params.id)
         result ? res.send(result) : next(createError(404, `Item with id ${req.params.id} was not found`))
     } catch (error) {
         next(error)
     }
 })
 
-blogPostsRouter.put("/:id", (req, res, next) => {
+blogPostsRouter.put("/:id", blogPostValidation, (req, res, next) => {
     try {
         const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        let filtered = content.filter(item => item.id !== req.params.id)
-        let me = content.find(item => item.id === req.params.id)
+        const filtered = content.filter(item => item._id !== req.params.id)
+        let me = content.find(item => item._id === req.params.id)
+        if (!me) next(createError(404, `Item with id ${req.params.id} was not found`))
         me = { ...me, ...req.body }
         filtered.push(me)
+        const errors = validationResult(filtered)
+        if (!errors.isEmpty()) next(createError(400, JSON.stringify(errors.errors)))
         fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
         res.send(me)
     } catch (error) {
         next(error)
     }
 })
+
 blogPostsRouter.delete("/:id", (req, res, next) => {
     try {
         const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        const filtered = content.filter(item => item.id !== req.params.id)
+        const filtered = content.find(item => item._id === req.params.id)
+        if (!filtered) res.status(400).send("id does not match")
         fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
         res.send("Deleted")
     } catch (error) {

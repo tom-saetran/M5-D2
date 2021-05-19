@@ -1,18 +1,6 @@
 [
-    {
-        "_id": "SERVER GENERATED ID",
-        "category": "ARTICLE CATEGORY",
-        "title": "ARTICLE TITLE",
-        "cover": "ARTICLE COVER (IMAGE LINK)",
-        "readTime": {
-            "value": 2,
-            "unit": "minute"
-        },
-        "author": {
-            "name": "AUTHOR AVATAR NAME",
-            "avatar": "AUTHOR AVATAR LINK"
-        },
-        "content": "HTML",
-        "createdAt": "NEW DATE SERVER GEN"
-    }
+    { "category": "Test", "title": "Test Post Title", "cover": "https://via.placeholder.com/200x600?text=Book", "readTime": { "value": 3, "unit": "parsec" }, "author": { "name": "Demo Name", "avatar": "http://via.placeholder.com/200x200?text=Avatar" }, "content": "Demo Content", "createdAt": "2021-05-19T14:06:13.369Z", "_id": "g2pc5fagkovjg3nd" },
+    { "category": "Test", "title": "Test Post Title", "cover": "https://via.placeholder.com/200x600?text=Book", "readTime": { "value": 3, "unit": "parsec" }, "author": { "name": "Demo Name", "avatar": "http://via.placeholder.com/200x200?text=Avatar" }, "content": "Demo Content", "createdAt": "2021-05-19T14:06:14.149Z", "_id": "g2pc5fagkovjg491" },
+    { "category": "Test", "title": "Test Post Title", "cover": "https://via.placeholder.com/200x600?text=Book", "readTime": { "value": 3, "unit": "parsec" }, "author": { "name": "Demo Name", "avatar": "http://via.placeholder.com/200x200?text=Avatar" }, "content": "Demo Content", "createdAt": "2021-05-19T14:06:14.878Z", "_id": "g2pc5fagkovjg4ta" },
+    { "category": "Test", "title": "Test Post Title", "cover": "https://via.placeholder.com/200x600?text=Book", "readTime": { "value": 3, "unit": "parsec" }, "author": { "name": "Demo Name", "avatar": "http://via.placeholder.com/200x200?text=Avatar" }, "content": "Demo Content", "createdAt": "2021-05-19T14:06:15.553Z", "_id": "g2pc5fagkovjg5c1" }
 ]
