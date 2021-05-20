@@ -1,4 +1,4 @@
-import path, { join } from "path"
+import path from "path"
 import uniqid from "uniqid"
 import multer from "multer"
 import express from "express"

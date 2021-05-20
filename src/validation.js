@@ -15,6 +15,11 @@ export const authorValidation = [
     body("avatar").exists().withMessage("Avatar is missing").isString().withMessage("Avatar format incorrect")
 ]
 
+export const commentValidation = [
+    body("author").exists().withMessage("Author is missing").isString().withMessage("Author format incorrect"),
+    body("text").exists().withMessage("Text is missing").isString().withMessage("Text format incorrect")
+]
+
 export const blogPostValidation = [
     body("category").exists().withMessage("Category is missing").isString().withMessage("Category format incorrect").notEmpty().withMessage("Category is empty"),
     body("title").exists().withMessage("Title is missing").isString().withMessage("Title format incorrect").notEmpty().withMessage("Title is empty"),

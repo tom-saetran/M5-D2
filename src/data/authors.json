@@ -1,7 +1,1 @@
-[
-    { "name": "Tim", "avatar": "https://via.placeholder.com/200", "createdAt": "2021-05-20T12:47:13.560Z", "id": "g2pc5hbwkoww2d20" },
-    { "name": "Tam", "avatar": "https://via.placeholder.com/200", "createdAt": "2021-05-20T12:47:18.057Z", "id": "g2pc5hbwkoww2gix" },
-    { "name": "Tum", "avatar": "https://via.placeholder.com/200", "createdAt": "2021-05-20T12:47:22.152Z", "id": "g2pc5hbwkoww2joo" },
-    { "name": "Tym", "avatar": "https://via.placeholder.com/200", "createdAt": "2021-05-20T12:47:26.603Z", "id": "g2pc5hbwkoww2n4b" },
-    { "name": "Tom", "avatar": "http://localhost:8888/public/img/avatars/g2pc5fk8kowuyupp.png", "createdAt": "2021-05-20T12:16:30.205Z", "id": "g2pc5fk8kowuyupp" }
-]
+[{"name":"Tim","avatar":"https://via.placeholder.com/200","createdAt":"2021-05-20T12:47:13.560Z","id":"g2pc5hbwkoww2d20"},{"name":"Tam","avatar":"https://via.placeholder.com/200","createdAt":"2021-05-20T12:47:18.057Z","id":"g2pc5hbwkoww2gix"},{"name":"Tum","avatar":"https://via.placeholder.com/200","createdAt":"2021-05-20T12:47:22.152Z","id":"g2pc5hbwkoww2joo"},{"name":"Tym","avatar":"https://via.placeholder.com/200","createdAt":"2021-05-20T12:47:26.603Z","id":"g2pc5hbwkoww2n4b"},{"name":"Tym","avatar":"https://via.placeholder.com/200","createdAt":"2021-05-20T13:35:16.433Z","id":"g2pc5dnckowxs5ht"},{"name":"Tom","avatar":"http://localhost:8888/img/avatars/g2pc5fk8kowuyupp.jpeg","createdAt":"2021-05-20T12:16:30.205Z","id":"g2pc5fk8kowuyupp"}]

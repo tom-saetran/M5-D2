@@ -8,7 +8,6 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 
 import authorsRouter from "./authors/index.js"
-import checkmailRouter from "./checkEmail.js"
 import { badRequestHandler, defaultErrorHandler, notFoundHandler } from "./errorHandlers.js"
 import blogPostsRouter from "./blogposts/index.js"
 import filesRouter from "./files/index.js"
