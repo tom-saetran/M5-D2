@@ -10,6 +10,11 @@ export const authorSignUpValidation = [
     body("email").exists().withMessage("Email is missing").normalizeEmail().isEmail().withMessage("Email is incorrect")
 ]
 
+export const authorValidation = [
+    body("name").exists().withMessage("Name is missing").isString().withMessage("Name format incorrect"),
+    body("avatar").exists().withMessage("Avatar is missing").isString().withMessage("Avatar format incorrect")
+]
+
 export const blogPostValidation = [
     body("category").exists().withMessage("Category is missing").isString().withMessage("Category format incorrect").notEmpty().withMessage("Category is empty"),
     body("title").exists().withMessage("Title is missing").isString().withMessage("Title format incorrect").notEmpty().withMessage("Title is empty"),

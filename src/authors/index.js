@@ -1,62 +1,78 @@
-import express from "express"
-import fs from "fs"
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
+import path, { join } from "path"
 import uniqid from "uniqid"
-import { checkMail } from "../checkEmail.js"
-import { authorSignUpValidation } from "../validation.js"
-import { validationResult } from "express-validator"
+import multer from "multer"
+import express from "express"
 import createError from "http-errors"
+import { validationResult } from "express-validator"
+import { authorValidation } from "../validation.js"
+import { readAuthors, writeAuthors, writeAvatar } from "../lib/fs-tools.js"
 
 const authorRouter = express.Router()
 
-const absoluteJSONPath = join(dirname(fileURLToPath(import.meta.url)), "authors.json")
-const relativeJSONPath = "/authors/authors.json"
-
-authorRouter.post("/", authorSignUpValidation, (req, res, next) => {
+authorRouter.post("/", authorValidation, async (req, res, next) => {
     const errors = validationResult(req)
 
     if (errors.isEmpty()) {
-        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        if (!checkMail(req.body.email, relativeJSONPath)) {
-            const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
-            content.push(newauthor)
-            fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
-
-            res.send(newauthor)
-        } else {
-            res.status(400).send("Email in use!")
-        }
+        const content = await readAuthors()
+        const newauthor = { ...req.body, createdAt: new Date(), id: uniqid() }
+        content.push(newauthor)
+        writeAuthors(content)
+        res.send(newauthor)
     } else {
-        next(createError(400, [{ ...errors }]))
+        next(createError(400, JSON.stringify(errors.errors)))
     }
 })
 
-authorRouter.get("/", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+authorRouter.post("/:id/uploadAvatar", multer().single("avatar"), async (req, res, next) => {
+    try {
+        const content = await readAuthors()
+        const result = content.filter(author => author.id !== req.params.id)
+
+        let me = content.find(author => author.id === req.params.id)
+        if (!me) next(createError(400, "id does not match"))
+
+        await writeAvatar(req.file.buffer, req.params.id + path.extname(req.file.originalname))
+
+        me = { ...me, avatar: `${req.protocol}://${req.get("host")}/public/img/avatars/${req.params.id}${path.extname(req.file.originalname)}` }
+        result.push(me)
+        writeAuthors(result)
+        console.log(me)
+        res.status(201).send("Added")
+    } catch (error) {
+        next(error)
+    }
+})
+
+authorRouter.get("/", async (req, res) => {
+    const content = await readAuthors()
     res.send(content)
 })
 
-authorRouter.get("/:id", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+authorRouter.get("/:id", async (req, res) => {
+    const content = await readAuthors()
     const result = content.find(author => author.id === req.params.id)
     res.send(result)
 })
 
-authorRouter.put("/:id", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-    let filtered = content.filter(author => author.id !== req.params.id)
+authorRouter.put("/:id", authorValidation, async (req, res) => {
+    const content = await readAuthors()
+    const result = content.filter(author => author.id !== req.params.id)
     let me = content.find(author => author.id === req.params.id)
     me = { ...me, ...req.body }
-    filtered.push(me)
-    fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
-    res.send(me)
+    const errors = validationResult(me)
+    if (errors.isEmpty()) {
+        result.push(me)
+        writeAuthors(result)
+        res.send(me)
+    } else {
+        next(createError(400, [{ ...errors.errors }]))
+    }
 })
 
-authorRouter.delete("/:id", (req, res) => {
-    const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-    const filtered = content.filter(author => author.id !== req.params.id)
-    fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
+authorRouter.delete("/:id", async (req, res) => {
+    const content = await readAuthors()
+    const result = content.filter(author => author.id !== req.params.id)
+    writeAuthors(result)
     res.send("Deleted")
 })
 

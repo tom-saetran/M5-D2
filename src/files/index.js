@@ -13,12 +13,7 @@ const filesRouter = express.Router()
 filesRouter.post("/upload", multer().single("avatar"), async (req, res, next) => {
     try {
         console.log(req.file)
-        //size
-        //mimetype
-        //fieldname
-        //originalname
-        //buffer
-        await writePicture(req.file, req.file.originalname)
+        await writePicture(req.file.buffer, req.file.originalname)
 
         res.send("yay")
     } catch (error) {
@@ -26,10 +21,11 @@ filesRouter.post("/upload", multer().single("avatar"), async (req, res, next) =>
     }
 })
 
-filesRouter.post("/upload", multer().array(), async (req, res, next) => {
+filesRouter.post("/uploads", multer().array("avatar"), async (req, res, next) => {
     try {
         const arrayOfPromises = req.files.map(file => {
-            /* ADD WRITE HERE */
+            console.log(file)
+            writePicture(file.buffer, file.originalname)
         })
         await Promise.all(arrayOfPromises)
         res.send("OK")

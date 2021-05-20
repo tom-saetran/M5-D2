@@ -7,25 +7,23 @@ import listEndpoints from "express-list-endpoints"
 import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 
-import studentsRouter from "./students/index.js"
 import authorsRouter from "./authors/index.js"
 import checkmailRouter from "./checkEmail.js"
 import { badRequestHandler, defaultErrorHandler, notFoundHandler } from "./errorHandlers.js"
 import blogPostsRouter from "./blogposts/index.js"
 import filesRouter from "./files/index.js"
-
-export const publicDirPath = join(process.cwd(), "public/img/students")
+import { publicFolderPath } from "./lib/fs-tools.js"
 
 const server = express()
 const port = 8888
 
-server.use(express.static(publicDirPath))
+server.use(express.static(publicFolderPath))
 server.use(cors())
 server.use(express.json())
 
 // ### Global Middlewares
 
-const logger = (req, res, next) => {
+const logger = async (req, res, next) => {
     const content = JSON.parse(fs.readFileSync(join(dirname(fileURLToPath(import.meta.url)), "log.json")))
     content.push({
         _timeStamp: new Date(),
@@ -36,13 +34,13 @@ const logger = (req, res, next) => {
         _id: uniqid()
     })
 
-    fs.writeFileSync(join(dirname(fileURLToPath(import.meta.url)), "log.json"), JSON.stringify(content))
+    await fs.writeFile(join(dirname(fileURLToPath(import.meta.url)), "log.json"), JSON.stringify(content))
     next()
 }
 server.use(logger)
 
 const auth = (req, res, next) => {
-    console.log("Authorization Middleware")
+    //console.log("Authorization Middleware")
     next()
 }
 server.use(auth)
@@ -50,8 +48,6 @@ server.use(auth)
 // ### Routes
 
 server.use("/authors", authorsRouter)
-server.use("/students", studentsRouter)
-server.use("/checkemail", checkmailRouter)
 server.use("/blogposts", blogPostsRouter)
 server.use("/files", filesRouter)
 
