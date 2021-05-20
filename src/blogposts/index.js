@@ -15,7 +15,7 @@ blogPostsRouter.post("/", blogPostValidation, async (req, res, next) => {
         const errors = validationResult(req)
         if (errors.isEmpty()) {
             const content = await readBlogPosts()
-            const entry = { ...req.body, createdAt: new Date(), _id: uniqid() }
+            const entry = { ...req.body, createdAt: new Date(), _id: uniqid(), author: { name: "Fake Tom", avatar: "https://via.placeholder.com/200?text=TOM", _id: "FAKEID" } }
             content.push(entry)
             await writeBlogPosts(content)
             res.status(201).send(entry)
@@ -97,9 +97,7 @@ blogPostsRouter.post("/:id/comments", commentValidation, async (req, res, next) 
             const result = content.filter(item => item._id !== req.params.id)
             let me = content.find(item => item._id === req.params.id)
             if (!me) res.status(400).send("id does not match")
-
             const entry = { ...req.body, createdAt: new Date(), _id: uniqid() }
-
             me.comments.push(entry)
             result.push(me)
             await writeBlogPosts(result)
@@ -107,6 +105,45 @@ blogPostsRouter.post("/:id/comments", commentValidation, async (req, res, next) 
         } else {
             next(createError(400, JSON.stringify(errors.errors)))
         }
+    } catch (error) {
+        next(error)
+    }
+})
+
+blogPostsRouter.put("/:id/comments/:cid", commentValidation, async (req, res, next) => {
+    try {
+        const content = await readBlogPosts()
+        const result = content.filter(item => item._id !== req.params.id)
+        let me = content.find(item => item._id === req.params.id)
+        if (!me) res.status(400).send("id does not match")
+
+        let comment = me.comments.find(item => item._id === req.params.cid)
+        if (!comment) res.status(400).send("id does not match")
+        comment = { ...comment, ...req.body }
+
+        console.log(comment)
+        const errors = validationResult(comment)
+        if (errors.isEmpty()) {
+            me.comments.push(comment)
+            result.push(me)
+            await writeBlogPosts(result)
+            res.send("Edited!")
+        } else {
+            next(createError(400, JSON.stringify(errors.errors)))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
+blogPostsRouter.delete("/:id/comments/:cid", async (req, res, next) => {
+    try {
+        const content = await readBlogPosts()
+        let me = content.find(item => item._id === req.params.id)
+        if (!me) res.status(400).send("id does not match")
+
+        let comment = me.comments.find(item => item._id === req.params.cid)
+        if (!comment) res.status(400).send("id does not match")
     } catch (error) {
         next(error)
     }

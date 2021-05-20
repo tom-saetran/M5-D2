@@ -1,8 +1,17 @@
 import express from "express"
-import fs from "fs"
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
+import { readAuthors } from "./lib/fs-tools.js"
+import { join } from "path"
+import { nextTick } from "process"
 
 const checkmailRouter = express.Router()
-export const checkMail = (email, location) => !!JSON.parse(fs.readFileSync(join(dirname(fileURLToPath(import.meta.url)), location))).find(author => author.email === email)
-export default checkmailRouter.post("/", (req, res) => res.send(checkMail(req.body.email)))
+
+export default checkmailRouter.post("/", async (req, res, next) => {
+    try {
+        const content = await readAuthors()
+        const result = content.find(item => item.email === req.body.email)
+        if (result) res.status(400).send("Email in use")
+        else res.send("Not in use")
+    } catch (error) {
+        next(error)
+    }
+})

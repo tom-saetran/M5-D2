@@ -1,13 +1,11 @@
 import {body} from "express-validator"
 
-export const authorSignUpValidation = [
-    body("name").exists().withMessage("Name is missing"),
-    body("surname").exists().withMessage("Surname is missing"),
-
-    body("username").exists().withMessage("Username is missing"),
-    body("password").exists().withMessage("Password is missing").isStrongPassword().withMessage("Password not strong enough"),
+export const authorSignUpValidationNoAvatar = [
+    body("name").exists().withMessage("Name is missing").isString().withMessage("Name format incorrect").notEmpty().withMessage("Name is empty"),
+    body("surname").exists().withMessage("Surname is missing").isString().withMessage("Surname format incorrect").notEmpty().withMessage("Surname is empty"),
     
-    body("email").exists().withMessage("Email is missing").normalizeEmail().isEmail().withMessage("Email is incorrect")
+    body("email").exists().withMessage("Email is missing").normalizeEmail().isEmail().withMessage("Email is incorrect").notEmpty().withMessage("Email is empty"),
+    body("dateofbirth").exists().withMessage("Date of birth is missing").isDate().withMessage("Date of birth format incorrect").notEmpty().withMessage("Date of birth is empty"),
 ]
 
 export const authorValidation = [

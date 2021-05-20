@@ -10,7 +10,7 @@ import { dirname, join } from "path"
 import authorsRouter from "./authors/index.js"
 import { badRequestHandler, defaultErrorHandler, notFoundHandler } from "./errorHandlers.js"
 import blogPostsRouter from "./blogposts/index.js"
-import filesRouter from "./files/index.js"
+import checkEmailRouter from "./checkEmail.js"
 import { publicFolderPath } from "./lib/fs-tools.js"
 
 const server = express()
@@ -48,7 +48,7 @@ server.use(auth)
 
 server.use("/authors", authorsRouter)
 server.use("/blogposts", blogPostsRouter)
-server.use("/files", filesRouter)
+server.use("/checkemail", checkEmailRouter)
 
 // ### Error Handlers
 

@@ -4,7 +4,7 @@ import { dirname, join } from "path"
 
 const { readJSON, writeJSON, writeFile } = fs
 
-const dataFolderPath = join(dirname(fileURLToPath(import.meta.url)), "../data")
+export const dataFolderPath = join(dirname(fileURLToPath(import.meta.url)), "../data")
 const uploadFolderPath = join(dirname(fileURLToPath(import.meta.url)), "../../public/img/uploads")
 const avatarsFolderPath = join(dirname(fileURLToPath(import.meta.url)), "../../public/img/avatars")
 const coversFolderPath = join(dirname(fileURLToPath(import.meta.url)), "../../public/img/covers")
