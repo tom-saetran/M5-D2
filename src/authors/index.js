@@ -27,16 +27,12 @@ authorRouter.post("/:id/uploadAvatar", multer().single("avatar"), async (req, re
     try {
         const content = await readAuthors()
         const result = content.filter(author => author.id !== req.params.id)
-
         let me = content.find(author => author.id === req.params.id)
         if (!me) next(createError(400, "id does not match"))
-
         await writeAvatar(req.file.buffer, req.params.id + path.extname(req.file.originalname))
-
-        me = { ...me, avatar: `${req.protocol}://${req.get("host")}/public/img/avatars/${req.params.id}${path.extname(req.file.originalname)}` }
+        me = { ...me, avatar: `${req.protocol}://${req.get("host")}/img/avatars/${req.params.id}${path.extname(req.file.originalname)}` }
         result.push(me)
         writeAuthors(result)
-        console.log(me)
         res.status(201).send("Added")
     } catch (error) {
         next(error)

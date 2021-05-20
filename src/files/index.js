@@ -34,7 +34,7 @@ filesRouter.post("/uploads", multer().array("avatar"), async (req, res, next) =>
     }
 })
 
-filesRouter.get("/download/:id", async (req, res, next) => {
+/*filesRouter.get("/download/:id", async (req, res, next) => {
     try {
         // STREAMS!
         // different types, readable (src), writeable (dest)
@@ -46,6 +46,6 @@ filesRouter.get("/download/:id", async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-})
+})*/
 
 export default filesRouter
