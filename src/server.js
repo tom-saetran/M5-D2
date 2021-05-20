@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "fs-extra"
 import cors from "cors"
 import uniqid from "uniqid"
 import express from "express"
@@ -12,10 +12,14 @@ import authorsRouter from "./authors/index.js"
 import checkmailRouter from "./checkEmail.js"
 import { badRequestHandler, defaultErrorHandler, notFoundHandler } from "./errorHandlers.js"
 import blogPostsRouter from "./blogposts/index.js"
+import filesRouter from "./files/index.js"
+
+export const publicDirPath = join(process.cwd(), "public/img/students")
 
 const server = express()
 const port = 8888
 
+server.use(express.static(publicDirPath))
 server.use(cors())
 server.use(express.json())
 
@@ -49,6 +53,7 @@ server.use("/authors", authorsRouter)
 server.use("/students", studentsRouter)
 server.use("/checkemail", checkmailRouter)
 server.use("/blogposts", blogPostsRouter)
+server.use("/files", filesRouter)
 
 // ### Error Handlers
 

@@ -1,25 +1,21 @@
-import fs from "fs"
+import fs from "fs-extra"
 import uniqid from "uniqid"
 import express from "express"
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
 import createError from "http-errors"
 import { validationResult } from "express-validator"
 import { blogPostValidation } from "../validation.js"
+import { readBlogPosts, writeBlogPosts } from "../lib/fs-tools.js"
 
 const blogPostsRouter = express.Router()
 
-const absoluteJSONPath = join(dirname(fileURLToPath(import.meta.url)), "blogposts.json")
-const relativeJSONPath = "/blogposts/blogposts.json"
-
-blogPostsRouter.post("/", blogPostValidation, (req, res, next) => {
+blogPostsRouter.post("/", blogPostValidation, async (req, res, next) => {
     try {
         const errors = validationResult(req)
         if (errors.isEmpty()) {
-            const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+            const content = await readBlogPosts()
             const entry = { ...req.body, createdAt: new Date(), _id: uniqid() }
             content.push(entry)
-            fs.writeFileSync(absoluteJSONPath, JSON.stringify(content))
+            await writeBlogPosts(content)
             res.status(201).send(entry)
         } else {
             next(createError(400, JSON.stringify(errors.errors)))
@@ -29,9 +25,9 @@ blogPostsRouter.post("/", blogPostValidation, (req, res, next) => {
     }
 })
 
-blogPostsRouter.get("/", (req, res, next) => {
+blogPostsRouter.get("/", async (req, res, next) => {
     try {
-        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+        const content = await readBlogPosts()
         if (req.query.title !== undefined) res.send(content.filter(item => item.title.toLowerCase().includes(req.query.title.toLowerCase())))
         res.send(content)
     } catch (error) {
@@ -39,9 +35,9 @@ blogPostsRouter.get("/", (req, res, next) => {
     }
 })
 
-blogPostsRouter.get("/:id", (req, res, next) => {
+blogPostsRouter.get("/:id", async (req, res, next) => {
     try {
-        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
+        const content = await readBlogPosts()
         const result = content.find(item => item._id === req.params.id)
         result ? res.send(result) : next(createError(404, `Item with id ${req.params.id} was not found`))
     } catch (error) {
@@ -49,29 +45,29 @@ blogPostsRouter.get("/:id", (req, res, next) => {
     }
 })
 
-blogPostsRouter.put("/:id", blogPostValidation, (req, res, next) => {
+blogPostsRouter.put("/:id", blogPostValidation, async (req, res, next) => {
     try {
-        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        const filtered = content.filter(item => item._id !== req.params.id)
+        const content = await readBlogPosts()
+        const result = content.filter(item => item._id !== req.params.id)
         let me = content.find(item => item._id === req.params.id)
         if (!me) next(createError(404, `Item with id ${req.params.id} was not found`))
         me = { ...me, ...req.body }
-        filtered.push(me)
-        const errors = validationResult(filtered)
+        result.push(me)
+        const errors = validationResult(result)
         if (!errors.isEmpty()) next(createError(400, JSON.stringify(errors.errors)))
-        fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
+        writeBlogPosts(result)
         res.send(me)
     } catch (error) {
         next(error)
     }
 })
 
-blogPostsRouter.delete("/:id", (req, res, next) => {
+blogPostsRouter.delete("/:id", async (req, res, next) => {
     try {
-        const content = JSON.parse(fs.readFileSync(absoluteJSONPath))
-        const filtered = content.find(item => item._id === req.params.id)
-        if (!filtered) res.status(400).send("id does not match")
-        fs.writeFileSync(absoluteJSONPath, JSON.stringify(filtered))
+        const content = await readBlogPosts()
+        const result = content.find(item => item._id === req.params.id)
+        if (!result) res.status(400).send("id does not match")
+        writeBlogPosts(result)
         res.send("Deleted")
     } catch (error) {
         next(error)
